@@ -1,11 +1,13 @@
+import csv
 from operator import attrgetter
 from time import sleep
 
+"""
+récuper les actions du fichier csv
+transformer les actions en objets Action
+ajouter les actions dans une liste
 
-class Customer:
-    def __init__(self, budget):
-        self.budget = budget
-
+"""
 
 class Action:
     def __init__(self, name, cost, percentage_after_two_years):
@@ -27,78 +29,34 @@ def buy_action(customer, action):
     customer.budget = new_budget
 
 
-luc = Customer(500)
-taken_actions = []
-
-actions = [
-    Action("Nike", 20, 5),
-    Action("Adidas", 30, 10),
-    Action("Ralph Lauren", 50, 15),
-    Action("Gucci", 70, 20),
-    Action("Fred Perry", 60, 17),
-    Action("Zara", 80, 25),
-    Action("Gap", 22, 7),
-    Action("Courir", 26, 11),
-    Action(
-        "Foot Locker",
-        48,
-        13,
-    ),
-    Action("Burberry", 34, 27),
-    Action("Mickael Kors", 42, 17),
-    Action("Prada", 110, 9),
-    Action("H&M", 38, 23),
-    Action("JD", 14, 1),
-    Action("Jules", 18, 3),
-    Action("Uniqlo", 8, 8),
-    Action("Celio", 4, 12),
-    Action("Diesel", 10, 14),
-    Action("Kiabi", 24, 21),
-    Action("Louis Vuitton", 114, 18),
-]
+customer_budget = 500
+actions_list = []
 
 
-def most_benefice(customer, actions, taken_actions):
+def most_benefice(budget, actions, taken_actions = []):
+    if actions:
+        action_one, val_one = most_benefice(budget, actions[1:], taken_actions)
+        action = actions[0]
+        if action[1] <= budget:
+            action_two, val_two = most_benefice(budget - action[1], actions[1:], taken_actions + [action])
+            if action_one < action_two:
+                return action_two, val_two
 
-    """sort the list by percentage to choose the actions with the most percentage of benefice first"""
-    actions_ranking = sorted(actions, key=attrgetter("percentage"), reverse=True)
-    min = actions_ranking[0].cost
-
-    """Use to define the lowest price of all actions"""
-    for i in range(len(actions_ranking)):
-        if actions_ranking[i].cost < min:
-            min = actions_ranking[i].cost
-
-    # To make sure that we don't spend more than budget
-    while customer.budget > min:
-        for i in range(len(actions_ranking)):
-            if customer.budget > actions_ranking[i].cost:
-                buy_action(customer, actions_ranking[i])
-                taken_actions.append(actions_ranking[i])
-
-    print(
-        "voici la liste des actions qu'il faudrait acheter pour un maximum de bénéfice"
-    )
-    sleep(1)
-    # Check the best combination of actions
-    for i in range(len(taken_actions)):
-        print(taken_actions[i])
-
-    sleep(2)
-    print(
-        "Vous prendriez  "
-        + str(len(taken_actions))
-        + " actions et il vous restera "
-        + str(customer.budget)
-        + " euros"
-    )
-
-    benefice = 0
-    for i in range(len(taken_actions)):
-        benefice += taken_actions[i].benefice
-
-    sleep(1)
-    print("Vous feriez un bénéfice de " + str(benefice) + " euros en 2ans")
+        return action_one, val_one
+    else:
+        return sum([i[2] for i in taken_actions]), taken_actions
 
 
-most_benefice(luc, actions, taken_actions)
+def get_action(file, list):
+    read = csv.DictReader(file)
+    for row in read:
+        action = Action(row["name"], float(row["price"]), float(row["profit"]))
+        tuple_action = (action.name, float(action.cost), float(action.benefice))
+        list.append(tuple_action)
+
+
+f = open(r"actions.csv")
+get_action(f, actions_list)
+print(most_benefice(customer_budget, actions_list))
+
+
