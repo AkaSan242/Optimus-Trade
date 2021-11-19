@@ -37,6 +37,32 @@ def most_benefice_bruteforce(budget, actions, taken_actions = []):
         return sum([i[2] for i in taken_actions]), taken_actions
 
 
+def most_benefice_optimized(budget, actions):
+    table = [[0 for x in range(budget + 1)] for x in range(len(actions) + 1)]
+
+    for i in range(1, len(actions) + 1):
+        for b in range(1, budget + 1):
+            if actions[i-1][1] <= b:
+                table[i][b] = max(actions[i-1][2] + table[i-1][b-actions[i-1][1]], table[i-1][b])
+            else:
+                table[i][b] = table[i-1][b]
+
+    b = budget
+    a = len(actions)
+    taken_actions = []
+
+    while b >= 0 and a >= 0:
+        e = actions[a-1]
+        if table[a][b] == table[a-1][b-e[1]] + e[2]:
+            taken_actions.append(e)
+            b -= e[1]
+
+        a -= 1
+
+    return table[-1][-1], taken_actions
+
+
+
 def get_action(file, list):
     """Read a csv file, take the data and transform them in actions to use them after"""
     read = csv.DictReader(file)
