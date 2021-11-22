@@ -1,5 +1,8 @@
 from optimuslib import get_action, most_benefice_optimized
 
+"""
+"""
+
 customer_budget = 500
 actions_list = []
 
