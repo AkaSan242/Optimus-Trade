@@ -7,9 +7,11 @@ class Action:
     def __init__(self, name, price, profit):
 
         self.name = name
-        self.price = math.ceil(abs(float(price)))
+        self.price = math.ceil(float(price))
+        self.real_price = float(price)
         self.profit = float(profit)
-        self.benefice = self.price * self.profit / 100
+        self.percentage = self.price * self.profit / 100
+        self.benefice = float("{:.2f}".format(self.percentage))
 
     def __repr__(self):
         return (
@@ -23,4 +25,5 @@ def get_action(file, list):
     read = csv.DictReader(file)
     for row in read:
         action = Action(row["name"], row["price"], row["profit"])
-        list.append(action)
+        if action.price > 0:
+            list.append(action)
