@@ -1,7 +1,5 @@
 import csv
-import math
 from optimuslib import get_action
-from memory_profiler import profile
 
 
 def most_benefice_optimized(budget, actions):
@@ -28,7 +26,7 @@ def most_benefice_optimized(budget, actions):
     taken_actions = []
 
     #while we still have money on budget and there is still actions to check 
-    while b >= 1 and a >= 0:
+    while b > 1 and a >= 0:
         e = actions[a-1]
 
         #if the action is the max benefice in the table for the budget we take it
@@ -46,9 +44,10 @@ def most_benefice_optimized(budget, actions):
     most_benefice = table[-2][-2]
     formated_benefice = "{:.2f}".format(most_benefice)
 
-    create_csv('dataset1report.csv', taken_actions, formated_spend_budget, formated_benefice)
-
-    return (["bénéfice: " + str(most_benefice) + "€", "Budget dépensé: " + str(formated_spend_budget) + "€"] ,
+    
+    
+    create_csv("actionsreport.csv", taken_actions, formated_spend_budget, formated_benefice)
+    return (["bénéfice: " + str(formated_benefice) + "€", "Budget dépensé: " + str(formated_spend_budget) + "€"] ,
      ["Liste des actions à acheter: " + str([i.name for i in taken_actions]) + " " + "Nombre d'actions: " +  str(len(taken_actions))]
     )
 
@@ -66,8 +65,8 @@ def create_csv(csvfile, list, budget, benefice):
 
     with open(csvfile, 'a', newline='', encoding='utf-8-sig') as data:
                 datawriter = csv.writer(data, delimiter=',', dialect='excel')
-                datawriter.writerow(["Total bénéfice: " + str(benefice) + "€" + " " + "Budget dépensé: " + str(budget) + "€"
-                + " " + "Nombre d'action: " + str(len(list))])
+                datawriter.writerow(["Total bénéfice: " + str(benefice) + "€","Budget dépensé: " + str(budget) + "€",
+                "Nombre d'action: " + str(len(list))])
 
 
 
@@ -76,7 +75,7 @@ actions_list = []
 
 
 if __name__=='__main__':
-    f = open(r"dataset1.csv")
+    f = open(r"actions.csv")
     get_action(f, actions_list)
     print("Voici le meilleur plan d'investissement:")
     print(most_benefice_optimized(customer_budget, actions_list))

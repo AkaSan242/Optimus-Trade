@@ -1,5 +1,4 @@
 from optimuslib import get_action
-from memory_profiler import profile
 
 
 def most_benefice_bruteforce(budget, actions, taken_actions = []):

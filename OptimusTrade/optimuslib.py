@@ -11,7 +11,8 @@ class Action:
         self.real_price = float(price)
         self.profit = float(profit)
         self.percentage = self.price * self.profit / 100
-        self.benefice = float("{:.2f}".format(self.percentage))
+        self.real_percentage = self.real_price * self.profit / 100
+        self.benefice = float("{:.2f}".format(self.real_percentage))
 
     def __repr__(self):
         return (
@@ -25,5 +26,5 @@ def get_action(file, list):
     read = csv.DictReader(file)
     for row in read:
         action = Action(row["name"], row["price"], row["profit"])
-        if action.price > 0:
+        if action.price > 1:
             list.append(action)
