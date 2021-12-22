@@ -3,6 +3,7 @@ from optimuslib import get_action
 
 def most_benefice_bruteforce(budget, actions, taken_actions = []):
     #Try all cominations from the list of action et return the ones with most benefice based on the budget
+    
     if actions:
         #Call the function until there is no one left to check
         action_one, val_one = most_benefice_bruteforce(budget, actions[1:], taken_actions)
@@ -19,18 +20,16 @@ def most_benefice_bruteforce(budget, actions, taken_actions = []):
         return action_one, val_one
     else:
         #return the sum of the most benefice combination and the list of actions you have to buy
-        return (["bénéfice: " + str(sum([i.benefice for i in taken_actions])) + "€", "budget dépensé: " + str( 500 - budget) + "€" ],
-                ["Liste des actions à acheter: " + str([i.name for i in taken_actions])]
+        return (["bénéfice: " + str(sum([i.benefice / 100 for i in taken_actions])) + "€", "budget dépensé: " + str( sum([i.price / 100 for i in taken_actions])) + "€" ],
+                ["Liste des actions à acheter: " + str([i.name for i in taken_actions]) + " " + "Nombre d'actions: " +  str(len(taken_actions))]
         )
 
-customer_budget = 500
-actions_list = []
+customer_budget = 50000
+
 
 if __name__=='__main__':
-    f = open(r"actions.csv")
-    get_action(f, actions_list)
     print("Voici le meilleur plan d'investissement:")
-    print(most_benefice_bruteforce(customer_budget, actions_list))
+    print(most_benefice_bruteforce(customer_budget, get_action(open('actions.csv'))))
 else:
     print("Veuillez éxécuter la commande 'python bruteforce.py' pour avoir le résultat")
 

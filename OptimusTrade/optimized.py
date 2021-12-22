@@ -8,12 +8,12 @@ def most_benefice_optimized(budget, actions):
    
    #Create a line for each action and calculate the max value of the benefice if buy
 
-    for i in range(len(actions)):
+    for i in range(1, len(actions) + 1):
         for b in range(budget + 1):
             action = actions[i-1]
 
             #to make sure we don't exceed the budget
-            if action.real_price <= b:
+            if action.price <= b:
                 #if the benefice is better than the previous one the new benefice become the max 
                 table[i][b] = max(action.benefice + table[i-1][b-action.price], table[i-1][b])
             else:
@@ -21,29 +21,28 @@ def most_benefice_optimized(budget, actions):
                 table[i][b] = table[i-1][b]
     
     
-    a = len(actions)
+    a = len(actions) 
     b = budget
     taken_actions = []
 
     #while we still have money on budget and there is still actions to check 
-    while b > 1 and a >= 0:
+    while a > 0:
         e = actions[a-1]
-
+        
         #if the action is the max benefice in the table for the budget we take it
         if table[a][b] == table[a-1][b-e.price] + e.benefice:
             taken_actions.append(e)
             b -= e.price
             
-
+        
         a -= 1
 
-    spend_budget = sum([i.real_price for i in taken_actions])
+    spend_budget = sum([i.price / 100 for i in taken_actions])
     formated_spend_budget = "{:.2f}".format(spend_budget)
     
     
-    most_benefice = table[-2][-2]
+    most_benefice = table[-1][-1] / 100
     formated_benefice = "{:.2f}".format(most_benefice)
-
     
     
     create_csv("actionsreport.csv", taken_actions, formated_spend_budget, formated_benefice)
@@ -61,7 +60,7 @@ def create_csv(csvfile, list, budget, benefice):
     for elt in list:
             with open(csvfile, 'a', newline='', encoding='utf-8-sig') as data:
                 datawriter = csv.writer(data, delimiter=',', dialect='excel')
-                datawriter.writerow([elt.name, str(elt.real_price) + "€", str(elt.benefice) + "%"])
+                datawriter.writerow([elt.name, str(elt.price / 100) + "€", str(elt.benefice / 100) + "%"])
 
     with open(csvfile, 'a', newline='', encoding='utf-8-sig') as data:
                 datawriter = csv.writer(data, delimiter=',', dialect='excel')
@@ -70,14 +69,10 @@ def create_csv(csvfile, list, budget, benefice):
 
 
 
-customer_budget = 500
-actions_list = []
-
+customer_budget = 50000
 
 if __name__=='__main__':
-    f = open(r"actions.csv")
-    get_action(f, actions_list)
     print("Voici le meilleur plan d'investissement:")
-    print(most_benefice_optimized(customer_budget, actions_list))
+    print(most_benefice_optimized(customer_budget, get_action(open('actions.csv'))))
 else:
     print("Veuillez éxécuter la commande 'python optimized.py' pour avoir le résultat")
