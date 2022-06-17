@@ -33,3 +33,7 @@ optimized.py create a csvfile with the result.
 ## Recommandation
 
 Python 3
+
+## Contribution
+[Luc Aka-Evy
+](https://github.com/Luc-Aka-Evy)
